@@ -9,7 +9,7 @@
 */
 //LIBS WE NEED FOR ESP32 FIRMWARE
 #include <Arduino.h>
-#include "DRI_interface.h"
+#include "DRI_interface.hpp"
 
 
 void DRI_init(void)

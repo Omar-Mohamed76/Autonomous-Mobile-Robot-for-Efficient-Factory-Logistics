@@ -8,7 +8,7 @@
 *****************************************************************************************************************************************
 *****************************************************************************************************************************************
 */
-#include "DRI_interface.h"
+#include "DRI_interface.hpp"
 #include  <Arduino.h>
 
 
@@ -21,7 +21,7 @@ void setup()
     Serial.println("NEMA23 Driver Test Starting...");
 	
 	//the limit switch pins
-    pinMode(SW,INTPUT);
+    pinMode(SW,INPUT);
 	
     DRI_init();
 
@@ -66,7 +66,7 @@ void loop()
 			{
 			DRI_falldown();//ONE STEP DOWN
 			steps++;
-			Serial.println("This is the Falling Step number: %d",steps);//DEBIGING
+			Serial.println("This is the Falling Step number: %d\n",steps);//DEBIGING
 			}
 		//THIS PART IS FOR DEBUGING IF THERE IS A SKIPED STEPS IT WILL EFFECT THE FALLING STEPS 
 		if(steps == (NUMBER_OF_REV)-1)//IF THE STEPS EQUAL TO THE NUMBER OF RISING STEPS SO THIS MEANS NO SKIPED STEPS
