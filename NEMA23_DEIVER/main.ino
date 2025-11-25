@@ -13,7 +13,7 @@
 
 
 #define NUMBER_OF_REV   5
-#define SW             20
+#define SW             14 // Switch 
 
 void setup()
 {
@@ -32,8 +32,6 @@ void loop()
     //I WILL ASSUME THAT THE SIGNAL IS 1 FOR RISE UP
     //AND 0 FOR FALL DOWN
 	
-	//the read of the switch one and two
-	char SW_state=digitalRead(SW);//the fall limit switch
 	
 
     int checker;
@@ -51,7 +49,7 @@ void loop()
 		{
 			DRI_riseup();//ONE STEP
 			steps++;
-			Serial.println("This is the Rising Step number: %d",steps);//DEBUGING
+			Serial.println("This is the Rising Step number: %d\n",steps);//DEBUGING
 		}
 		steps=0;//RESTE THE STEPS ITER
         break;
@@ -62,11 +60,11 @@ void loop()
 	//BY COMPINIG THIS METHODS TOGATHER THE PROBLEM IS SOLVED 
     case 2:
 		Serial.println("Start the falling...");
-		while(steps< NUMBER_OF_REV && SW_state!= 1)//WHILE THE STEPS IS LESS THAN THE FIXED AND SW NOT PRESSED
+		while(steps < NUMBER_OF_REV && digitalRead(SW)!= 1)//WHILE THE STEPS IS LESS THAN THE FIXED AND SW NOT PRESSED
 			{
-			DRI_falldown();//ONE STEP DOWN
-			steps++;
-			Serial.println("This is the Falling Step number: %d\n",steps);//DEBIGING
+				DRI_falldown();//ONE STEP DOWN
+				steps++;
+				Serial.println("This is the Falling Step number: %d\n",steps);//DEBIGING
 			}
 		//THIS PART IS FOR DEBUGING IF THERE IS A SKIPED STEPS IT WILL EFFECT THE FALLING STEPS 
 		if(steps == (NUMBER_OF_REV)-1)//IF THE STEPS EQUAL TO THE NUMBER OF RISING STEPS SO THIS MEANS NO SKIPED STEPS
@@ -75,7 +73,7 @@ void loop()
 			}
 		else // ANY ELSE NUMBER OF THE STEPS V THIS MEANS THAT THERE IS A SKIPPED STEPS
 			{
-			Serial.println("THERE IS A SKIPED STEPS THE THE TOTAL FALLING STEPS %d",steps);
+			Serial.println("THERE IS A SKIPED STEPS THE THE TOTAL FALLING STEPS %d",(steps+1));
 			}
 		steps=0;
         break;

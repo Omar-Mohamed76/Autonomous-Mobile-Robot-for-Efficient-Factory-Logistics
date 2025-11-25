@@ -10,8 +10,8 @@
 #ifndef _DRI_DRIVER_H_
 #define _DRI_DRIVER_H_
 
-#define DIR_PIN  21     // Direction pin
-#define PUL_PIN  20     // Pulse pin
+#define DIR_PIN  12     // Direction pin  DIR+
+#define PUL_PIN  13     // Pulse pin	PUL+	
 #define DRI_STEPS  1600 	// step number
 
 void DRI_init(void);
