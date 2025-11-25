@@ -13,7 +13,7 @@
 
 
 #define NUMBER_OF_REV   5
-#define SW             18 // Switch 
+#define SW             14 // Switch 
 
 void setup()
 {
