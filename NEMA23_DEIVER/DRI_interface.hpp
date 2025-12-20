@@ -10,13 +10,16 @@
 #ifndef _DRI_DRIVER_H_
 #define _DRI_DRIVER_H_
 
-#define DIR_PIN  12     // Direction pin  DIR+
-#define PUL_PIN  13     // Pulse pin	PUL+	
-#define DRI_STEPS  1600 	// step number
+#define DIR_PIN  		12      // Direction pin  DIR+
+#define PUL_PIN  		13     // Pulse pin	PUL+	
+#define DRI_STEPS  		1600  // step number
+#define DRI_ON_TIME 	10	 // ON time of the pulse 	
+#define DRI_OFF_TIME 	10  // OF time of the pulse 
 
-void DRI_init(void);
-void DRI_riseup(void);
-void DRI_falldown(void);
+void DRI_init(void); 	     // declare the pins 
+void DRI_riseup(void); 		//rotate in the clk wise
+void DRI_falldown(void);   //rotate to the anti clk wise 
+void DRI_PWM(void); 	  //the PWM creation
 
 
 #endif

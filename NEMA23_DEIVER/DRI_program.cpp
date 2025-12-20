@@ -11,7 +11,6 @@
 #include <Arduino.h>
 #include "DRI_interface.hpp"
 
-
 void DRI_init(void)
 {
 	//SET THE PINS TO OUTPUT	
@@ -25,21 +24,7 @@ void DRI_riseup(void)//rise up
 	//FIRST LETS SET THE DIRECTION TO CLOCKWISE
 	digitalWrite(DIR_PIN,HIGH);//CLK WISE
 	delayMicroseconds(5);//must to wait a 5 micro seconds for the driver to understand
-
-	int check=0;
-
-	while(DRI_STEPS>check)//this loop will run in the amount of the steps number
-	{
-		//HIGH THE POWERSCREW
-		digitalWrite(PUL_PIN,HIGH);
-		delayMicroseconds(10);
-		digitalWrite(PUL_PIN,LOW);
-		delayMicroseconds(10);
-		check++;
-
-
-		delayMicroseconds(2000);//change this number from 2000 --> 4000
-	}
+	DRI_PWM();
 
 } 
 
@@ -50,21 +35,24 @@ void DRI_falldown(void)// fall down
 	//FIRST LETS SET THE DIRECTION TO CONTERCLOCKWISE
 	digitalWrite(DIR_PIN,LOW);//CONTERCLK WISE
 	delayMicroseconds(5);//must to wait a 5 micro seconds for the driver to understand
+	DRI_PWM();
 
+}
+
+
+void DRI_PWM(void)
+{
 	int check=0;
 
 	while(DRI_STEPS>check)//this loop will run in the amount of the steps number
 	{
 		//LOW THE POWERSCREW
 		digitalWrite(PUL_PIN,HIGH);
-		delayMicroseconds(10);
+		delayMicroseconds(DRI_ON_TIME);
 		digitalWrite(PUL_PIN,LOW);
-		delayMicroseconds(10);
+		delayMicroseconds(DRI_OFF_TIME);
 		check++;
-
 
 		delayMicroseconds(2000);//change this number from 2000 --> 4000
 	}
-
 }
-
