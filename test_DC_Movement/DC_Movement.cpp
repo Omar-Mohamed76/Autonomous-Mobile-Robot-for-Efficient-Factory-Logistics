@@ -1,39 +1,44 @@
+/**************************** DC_Movement.cpp (ESP32 Core v3.0+ Version) ****************************
+************************************************** Date     :  11/15/2025
+************************************************** Name     :  Omar Mohamed Hamdy (Updated)
+************************************************** Version  :  2.0 (v3.0 API)
+****************************************************************************************************/
+
 #include <Arduino.h>
-#include "DC_Movement.h"
+#include "DC_Movement.hpp"
 
 // --- Define PWM Properties ---
-const int PWM_FREQ = 5000;       // 5 kHz frequency
-const int PWM_RESOLUTION = 8;    // 8-bit resolution (0-255)
+// Increased to 20kHz to eliminate high-pitched motor noise
+const int PWM_FREQ = 20000;    
+const int PWM_RESOLUTION = 8; // 8-bit resolution (0-255)
 
 // --- Constructor ---
-// Stores the pins and assigns unique PWM channels
-RobotDrivetrain::RobotDrivetrain(int L_lpwm, int L_rpwm, int R_lpwm, int R_rpwm) {
+// Stores the pins. Note: Channels are handled automatically in ESP32 Core v3.0
+RobotDrivetrain::RobotDrivetrain(int L_lpwm, int L_rpwm, int R_lpwm, int R_rpwm)
+{
     _L_LPWM_PIN = L_lpwm;
     _L_RPWM_PIN = L_rpwm;
     _R_LPWM_PIN = R_lpwm;
     _R_RPWM_PIN = R_rpwm;
-
-    // Assign PWM channels (0-15 are available on ESP32)
-    _L_L_CHANNEL = 0;
-    _L_R_CHANNEL = 1;
-    _R_L_CHANNEL = 2;
-    _R_R_CHANNEL = 3;
+    
+    // Channel variables (_L_L_CHANNEL etc.) from .hpp are no longer needed 
+    // in this version, so we simply ignore them here.
 }
 
 // --- init() ---
-// Sets up the ESP32's ledc channels
-void RobotDrivetrain::init() {
-    // Setup Left Motor Channels
-    ledcSetup(_L_L_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
-    ledcAttachPin(_L_LPWM_PIN, _L_L_CHANNEL);
-    ledcSetup(_L_R_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
-    ledcAttachPin(_L_RPWM_PIN, _L_R_CHANNEL);
+// Sets up the ESP32's ledc pins using the new v3.0 syntax
+void RobotDrivetrain::init()
+{
+    // In v3.0, ledcAttach combines setup and attach.
+    // Syntax: ledcAttach(pin, frequency, resolution)
+    
+    // Setup Left Motor Pins
+    ledcAttach(_L_LPWM_PIN, PWM_FREQ, PWM_RESOLUTION);
+    ledcAttach(_L_RPWM_PIN, PWM_FREQ, PWM_RESOLUTION);
 
-    // Setup Right Motor Channels
-    ledcSetup(_R_L_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
-    ledcAttachPin(_R_LPWM_PIN, _R_L_CHANNEL);
-    ledcSetup(_R_R_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
-    ledcAttachPin(_R_RPWM_PIN, _R_R_CHANNEL);
+    // Setup Right Motor Pins
+    ledcAttach(_R_LPWM_PIN, PWM_FREQ, PWM_RESOLUTION);
+    ledcAttach(_R_RPWM_PIN, PWM_FREQ, PWM_RESOLUTION);
 
     // Ensure motors are stopped at boot
     stop();
@@ -42,81 +47,108 @@ void RobotDrivetrain::init() {
 // --- Private Helper Functions ---
 
 // Controls the Left Motor
-void RobotDrivetrain::setLeftMotor(int speed) {
-    speed = constrain(speed, -255, 255); // Ensure speed is within bounds
+void RobotDrivetrain::setLeftMotor(int speed)
+{
+    speed = constrain(speed, -255, 255);
 
-    if (speed > 0) { // Forward
-        ledcWrite(_L_L_CHANNEL, speed); // Set LPWM
-        ledcWrite(_L_R_CHANNEL, 0);     // Clear RPWM
-    } else if (speed < 0) { // Reverse
-        ledcWrite(_L_L_CHANNEL, 0);     // Clear LPWM
-        ledcWrite(_L_R_CHANNEL, abs(speed)); // Set RPWM
-    } else { // Stop (Brake)
-        ledcWrite(_L_L_CHANNEL, 0);
-        ledcWrite(_L_R_CHANNEL, 0);
+    if (speed > 0)
+    {                                   
+        // Forward: Write directly to the PIN, not the channel
+        ledcWrite(_L_LPWM_PIN, speed); 
+        ledcWrite(_L_RPWM_PIN, 0);     
+    }
+    else if (speed < 0)
+    {                                        
+        // Reverse
+        ledcWrite(_L_LPWM_PIN, 0);          
+        ledcWrite(_L_RPWM_PIN, abs(speed)); 
+    }
+    else
+    { 
+        // Stop
+        ledcWrite(_L_LPWM_PIN, 0);
+        ledcWrite(_L_RPWM_PIN, 0);
     }
 }
 
 // Controls the Right Motor
-void RobotDrivetrain::setRightMotor(int speed) {
-    speed = constrain(speed, -255, 255); // Ensure speed is within bounds
+void RobotDrivetrain::setRightMotor(int speed)
+{
+    speed = constrain(speed, -255, 255);
 
-    if (speed > 0) { // Forward
-        ledcWrite(_R_L_CHANNEL, speed); // Set LPWM
-        ledcWrite(_R_R_CHANNEL, 0);     // Clear RPWM
-    } else if (speed < 0) { // Reverse
-        ledcWrite(_R_L_CHANNEL, 0);     // Clear LPWM
-        ledcWrite(_R_R_CHANNEL, abs(speed)); // Set RPWM
-    } else { // Stop (Brake)
-        ledcWrite(_R_L_CHANNEL, 0);
-        ledcWrite(_R_R_CHANNEL, 0);
+    if (speed > 0)
+    {                                   
+        // Forward
+        ledcWrite(_R_LPWM_PIN, speed); 
+        ledcWrite(_R_RPWM_PIN, 0);     
+    }
+    else if (speed < 0)
+    {                                        
+        // Reverse
+        ledcWrite(_R_LPWM_PIN, 0);          
+        ledcWrite(_R_RPWM_PIN, abs(speed)); 
+    }
+    else
+    { 
+        // Stop
+        ledcWrite(_R_LPWM_PIN, 0);
+        ledcWrite(_R_RPWM_PIN, 0);
     }
 }
 
-
 // --- Public Movement Functions ---
+// These remain exactly the same as your original logic
 
-void RobotDrivetrain::moveForward(int speed) {
+void RobotDrivetrain::moveForward(int speed)
+{
     setLeftMotor(speed);
     setRightMotor(speed);
 }
 
-void RobotDrivetrain::moveBackward(int speed) {
+void RobotDrivetrain::moveBackward(int speed)
+{
     setLeftMotor(-speed);
     setRightMotor(-speed);
 }
 
-void RobotDrivetrain::turnLeft(int speed) {
-    setLeftMotor(-speed); // Left motor reverse
-    setRightMotor(speed); // Right motor forward
-}
-
-void RobotDrivetrain::turnRight(int speed) {
-    setLeftMotor(speed);  // Left motor forward
-    setRightMotor(-speed);// Right motor reverse
-}
-
-void RobotDrivetrain::forwardLeft(int speed) {
-    setLeftMotor(speed / 2); // Left motor slower
+void RobotDrivetrain::turnLeft(int speed)
+{
+    setLeftMotor(-speed);
     setRightMotor(speed);
 }
 
-void RobotDrivetrain::forwardRight(int speed) {
+void RobotDrivetrain::turnRight(int speed)
+{
     setLeftMotor(speed);
-    setRightMotor(speed / 2); // Right motor slower
-}
-
-void RobotDrivetrain::backwardLeft(int speed) {
-    setLeftMotor(-speed);
-    setRightMotor(-speed / 2); // Right motor slower
-}
-
-void RobotDrivetrain::backwardRight(int speed) {
-    setLeftMotor(-speed / 2); // Left motor slower
     setRightMotor(-speed);
 }
 
-void RobotDrivetrain::stop() {
+void RobotDrivetrain::forwardLeft(int speed)
+{
+    setLeftMotor(speed / 2); 
+    setRightMotor(speed);
+}
+
+void RobotDrivetrain::forwardRight(int speed)
+{
+    setLeftMotor(speed);
+    setRightMotor(speed / 2);
+}
+
+void RobotDrivetrain::backwardLeft(int speed)
+{
+    setLeftMotor(-speed);
+    setRightMotor(-speed / 2);
+}
+
+void RobotDrivetrain::backwardRight(int speed)
+{
+    setLeftMotor(-speed / 2); 
+    setRightMotor(-speed);
+}
+
+void RobotDrivetrain::stop()
+{
     setLeftMotor(0);
     setRightMotor(0);
 }
