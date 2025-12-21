@@ -8,7 +8,6 @@ class BatteryLEDNode(Node):
     def __init__(self):
         super().__init__('battery_leds')
         
-        # Assigned to free GPIOs to prevent signal collision
         self.led_red = LED(4)   
         self.led_yellow = LED(27) 
         self.led_green = LED(22)  
