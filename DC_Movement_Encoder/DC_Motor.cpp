@@ -1,5 +1,19 @@
 #include "DC_Motor.h"
 
+// mario if you want to use this file with micro ROS with C language, just edit the name to be { DC_Motor.c }
+// and in the DC_Moto.h delete:
+/* 
+#ifdef __cplusplus
+extern "C" {
+#endif
+.
+.
+.
+
+#ifdef __cplusplus
+}
+#endif
+*/
 
 /* ===============================================================
    SETUP FUNCTIONS
